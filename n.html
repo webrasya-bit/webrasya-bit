@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HBD Nadd!</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@1,800&family=Quicksand:wght@600&family=Dancing+Script&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-dark: #0f0f13;
+            --bg-accent: #1e1e24;
+            --gold: #d4af37;
+            --gold-bright: #fff3a3;
+            --frame-glow: rgba(255, 243, 163, 0.6); 
+        }
+
+        body {
+            margin: 0; padding: 0; display: flex; justify-content: center; align-items: center;
+            min-height: 100vh; background: linear-gradient(to bottom, #1a1a2e, #0f0f0f);
+            font-family: 'Quicksand', sans-serif; overflow: hidden; color: white;
+        }
+
+        .stars { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 0; }
+
+        .modern-player {
+            position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%);
+            width: 80%; max-width: 300px; background: rgba(255, 255, 255, 0.1);
+            border-radius: 20px; padding: 10px 15px; display: flex; align-items: center; 
+            justify-content: space-between; z-index: 1000; border: 1px solid rgba(212, 175, 55, 0.3);
+            backdrop-filter: blur(5px);
+        }
+
+        .play-toggle { 
+            width: 40px; height: 40px; background: var(--gold); 
+            border: none; border-radius: 50%; cursor: pointer; color: #000; font-weight: bold;
+        }
+
+        .container { position: relative; z-index: 1; width: 85%; max-width: 360px; text-align: center; }
+
+        h1 { 
+            font-family: 'Playfair Display', serif; font-style: italic;
+            font-size: 2.8rem; color: #fff; margin-bottom: 10px;
+            text-shadow: 0 0 10px var(--gold), 0 0 20px var(--gold);
+            animation: glowPulse 2s infinite alternate;
+        }
+
+        @keyframes glowPulse {
+            0% { text-shadow: 0 0 5px var(--gold), 0 0 10px var(--gold); transform: scale(1); }
+            100% { text-shadow: 0 0 15px var(--gold-bright), 0 0 30px var(--gold); transform: scale(1.02); }
+        }
+
+        /* Update Teks Instruksi */
+        .instruction { 
+            font-family: 'Dancing Script', cursive; font-size: 1.3rem; 
+            color: var(--gold-bright); margin-bottom: 30px; 
+        }
+
+        .photo-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; }
+        
+        .photo-grid img {
+            width: 100%; height: 120px; object-fit: cover; 
+            border: 5px solid #fff; border-bottom: 25px solid #fff; 
+            box-shadow: 0 0 15px var(--frame-glow), 0 0 5px rgba(255, 255, 255, 0.8) inset, 0 10px 20px rgba(0,0,0,0.5);
+            transition: 0.4s; cursor: pointer;
+        }
+
+        .img-card:hover { 
+            transform: translateY(-10px) rotate(0deg) !important; 
+            z-index: 5;
+            box-shadow: 0 0 25px var(--gold-bright), 0 0 10px rgba(255, 255, 255, 1) inset, 0 15px 30px rgba(0,0,0,0.6);
+        }
+        
+        .img1 { transform: rotate(-5deg); } .img2 { transform: rotate(5deg); }
+        .img3 { transform: rotate(-3deg); } .img4 { transform: rotate(3deg); }
+
+        .modal {
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.95); z-index: 2000; justify-content: center; 
+            align-items: center; overflow-y: auto; padding: 20px 0;
+        }
+        .modal-body { width: 90%; max-width: 400px; text-align: center; margin-top: 50px;}
+
+        #modalImg {
+            width: 100%; height: auto; border: 8px solid #fff; border-bottom: 45px solid #fff; 
+            box-shadow: 0 0 30px var(--gold-bright), 0 0 15px rgba(255, 255, 255, 0.9) inset, 0 15px 40px rgba(0,0,0,0.7);
+            margin-bottom: 25px;
+        }
+
+        .modal-content { font-size: 1.2rem; color: #fff; line-height: 1.6; min-height: 50px; }
+        
+        .close-btn { 
+            background: var(--gold); color: #000; border: none; 
+            padding: 12px 40px; border-radius: 25px; font-weight: bold; cursor: pointer;
+            margin: 20px 0 50px; font-size: 1rem;
+        }
+
+        .footer { font-size: 0.8rem; color: var(--gold); margin-top: 25px; letter-spacing: 2px; }
+
+        .particle {
+            position: absolute; background: white; border-radius: 50%; opacity: 0.5;
+            animation: fly 6s linear infinite;
+        }
+        @keyframes fly { 0% { transform: translateY(0); opacity: 1; } 100% { transform: translateY(-100vh); opacity: 0; } }
+    </style>
+</head>
+<body>
+
+    <div class="stars" id="starField"></div>
+    <audio id="hbdSong" loop><source src="lagu.mp3" type="audio/mpeg"></audio>
+
+    <div class="modern-player">
+        <div style="font-size: 0.7rem;"><b>Special for Nadd</b><br><span style="opacity: 0.6;">from: rsya</span></div>
+        <button class="play-toggle" onclick="toggleMusic()" id="pBtn">▶</button>
+    </div>
+
+    <div class="container">
+        <h1>Happy Birthday Nadd</h1>
+        <p class="instruction">klik foto dari 1-4 yaa ✨</p>
+        
+        <div class="photo-grid">
+            <img src="foto1.jpg" class="img-card img1" onclick="openModal(0, 'foto1.jpg')">
+            <img src="foto2.jpg" class="img-card img2" onclick="openModal(1, 'foto2.jpg')">
+            <img src="foto3.jpg" class="img-card img3" onclick="openModal(2, 'foto3.jpg')">
+            <img src="foto4.jpg" class="img-card img4" onclick="openModal(3, 'foto4.jpg')">
+        </div>
+        
+        <div class="footer">3 SEPTEMBER 2010 — ∞</div>
+    </div>
+
+    <div id="myModal" class="modal">
+        <div class="modal-body">
+            <img id="modalImg" src="">
+            <div class="modal-content" id="modalText"></div>
+            <button class="close-btn" onclick="closeModal()">Tutup</button>
+        </div>
+    </div>
+
+    <script>
+        const messages = [
+            "haloo, gimana kabarnyaa?",
+            "adaa yang ulang tahunn niih kayanya",
+            "semogaa nad panjang umur, sehat selalu, gapernah lupa sama keluarga dan temen temen, semogaa cita cita nadd tercapai semua yaa",
+            "kamu di titik sekarang udah hebat banget, wish u all the bestt"
+        ];
+
+        let typingTimer;
+
+        function openModal(index, imgSrc) {
+            const modal = document.getElementById("myModal");
+            const modalText = document.getElementById("modalText");
+            const modalImg = document.getElementById("modalImg");
+            
+            clearInterval(typingTimer);
+            modalImg.src = imgSrc;
+            modal.style.display = "flex";
+            modalText.innerHTML = "";
+
+            let i = 0;
+            const text = messages[index];
+            typingTimer = setInterval(() => {
+                if (i < text.length) {
+                    modalText.innerHTML += text.charAt(i);
+                    i++;
+                } else { clearInterval(typingTimer); }
+            }, 50);
+        }
+
+        function closeModal() {
+            document.getElementById("myModal").style.display = "none";
+            clearInterval(typingTimer);
+        }
+
+        function toggleMusic() {
+            const song = document.getElementById("hbdSong");
+            if (song.paused) { song.play(); document.getElementById("pBtn").innerHTML = "||"; }
+            else { song.pause(); document.getElementById("pBtn").innerHTML = "▶"; }
+        }
+
+        const starField = document.getElementById('starField');
+        for (let i = 0; i < 15; i++) {
+            let star = document.createElement('div');
+            star.className = 'particle';
+            star.style.width = Math.random() * 3 + 'px';
+            star.style.height = star.style.width;
+            star.style.left = Math.random() * 100 + 'vw';
+            star.style.bottom = '-10px';
+            star.style.animationDelay = Math.random() * 6 + 's';
+            starField.appendChild(star);
+        }
+    </script>
+</body>
+</html>
